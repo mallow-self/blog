@@ -46,3 +46,4 @@ class BlogDetailView(DetailView):
     http_method_names = ["get"]
 
 
+

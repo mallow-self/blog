@@ -14,18 +14,7 @@
 
   <body>
     <h2>Blog List</h2>
-    {% comment %}
-    <table id="blog_table" class="display">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Title</th>
-          <th>Content</th>
-          <th>Category</th>
-        </tr>
-      </thead>
-    </table>
-    {% endcomment %}
+    <button id="createBtn">Create</button>
 
     <div class="container mt-4">
       <h2>{{ view.title }}</h2>
@@ -47,48 +36,46 @@
     </div>
 
     <script>
-        {% comment %} $(document).ready(function () {
-          $("#blog_table").DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{% url 'blog:blog_ajax' %}",
-            columns: [
-              { data: "pk", name: "pk" },
-              { data: "title", name: "title" },
-              { data: "content", name: "content" },
-              { data: "category", name: "category" },
-            ],
-          });
-        }); {% endcomment %}
-
-        $(document).ready(function() {
-        $('#blog-table').DataTable({
+      $(document).ready(function () {
+        $("#blog-table").DataTable({
           processing: true,
           serverSide: true,
           ajax: "{% url 'blog:blog_ajax' %}",
           columns: [
-            { data: "pk", name:"pk" },
-            { data: "title" },
+            { data: "pk" },
+            {
+              data: "title",
+              render: function (data, type, row) {
+                return '<a href="/blog/' + row.pk + '">' + data + "</a>";
+              },
+            },
             {
               data: "content",
-              render: function(data, type, row) {
+              render: function (data, type, row) {
                 // Truncate content for display
-                return type === 'display' && data.length > 100 ?
-                  data.substr(0, 100) + '...' : data;
-              }
+                return type === "display" && data.length > 100
+                  ? data.substr(0, 100) + "..."
+                  : data;
+              },
             },
             { data: "category" },
             {
               data: null,
               orderable: false,
-              render: function(data, type, row) {
-                return '<div class="btn-group" role="group">' +
-                  '<a href="/blog/edit/' + row.pk + '" class="btn btn-sm btn-primary">Edit</a> ' +
-                  '<a href="/blog/delete/' + row.pk + '" class="btn btn-sm btn-danger">Delete</a>' +
-                  '</div>';
-              }
-            }
-          ]
+              render: function (data, type, row) {
+                return (
+                  '<div class="btn-group" role="group">' +
+                  '<a href="/blog/edit/' +
+                  row.pk +
+                  '" class="btn btn-sm btn-primary">Edit</a> ' +
+                  '<a href="/blog/delete/' +
+                  row.pk +
+                  '" class="btn btn-sm btn-danger">Delete</a>' +
+                  "</div>"
+                );
+              },
+            },
+          ],
         });
       });
     </script>
