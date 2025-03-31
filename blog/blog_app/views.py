@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from asgiref.sync import sync_to_async
-from django.views.generic import ListView, TemplateView, DetailView, UpdateView
+from django.views.generic import ListView, TemplateView, DetailView, UpdateView, CreateView
 from .models import Blog
 from ajax_datatable.views import AjaxDatatableView
 from django.template.response import TemplateResponse
+from django.urls import reverse_lazy
+from django.template.loader import render_to_string
+
 
 # Create your views here.
 # class BlogListView(ListView):
@@ -24,7 +27,7 @@ from django.template.response import TemplateResponse
     
 
 class BlogTableView(TemplateView):
-    template_name = "blog_app/blog_list.html"
+    template_name = "blog_app/blog_list2.html"
 
 
 class BlogAjaxDatatableView(AjaxDatatableView):
@@ -46,4 +49,72 @@ class BlogDetailView(DetailView):
     http_method_names = ["get"]
 
 
+# update and create
 
+class BlogCreateView(CreateView):
+    model = Blog
+    template_name = 'blog_app/blog_form_partial.html'
+    success_url = reverse_lazy('blog:blog_list')
+    fields = ["title","content","image","category"]
+
+    def get(self, request, *args, **kwargs):
+        # If AJAX request, return only the form
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            form = self.get_form()
+            return render(request, self.template_name, {'form': form})
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # Handle AJAX form submission
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            self.object = form.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Blog created successfully!',
+                'id': self.object.pk,
+            })
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Handle AJAX form submission with errors
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'html': render_to_string(self.template_name, {'form': form}, request=self.request)
+            })
+        return super().form_invalid(form)
+
+
+class BlogUpdateView(UpdateView):
+    model = Blog
+    template_name = 'blog_app/blog_form_partial.html'
+    success_url = reverse_lazy('blog:blog_list')
+    fields = ["title", "content", "image", "category"]
+
+    def get(self, request, *args, **kwargs):
+        # If AJAX request, return only the form
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            self.object = self.get_object()
+            form = self.get_form()
+            return render(request, self.template_name, {'form': form, 'object': self.object})
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # Handle AJAX form submission
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            self.object = form.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Blog updated successfully!',
+                'id': self.object.pk,
+            })
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Handle AJAX form submission with errors
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'html': render_to_string(self.template_name, {'form': form, 'object': self.get_object()}, request=self.request)
+            })
+        return super().form_invalid(form)

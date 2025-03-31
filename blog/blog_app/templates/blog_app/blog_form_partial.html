@@ -1,0 +1,93 @@
+<form id="blogForm"
+    action="{% if object %}{% url 'blog:blog_update' pk=object.pk %}{% else %}{% url 'blog:blog_create' %}{% endif %}"
+    method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+        {{ form.title.errors }}
+        {{ form.title }}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+        {{ form.content.errors }}
+        {{ form.content }}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.image.id_for_label }}" class="form-label">Image</label>
+        {{ form.image.errors }}
+
+        {% if has_image %}
+        <div class="mb-2">
+            <p>Current image: <a href="{{ image_url }}" target="_blank">View image</a></p>
+            <img src="{{ image_url }}" alt="Blog image" style="max-width: 200px; max-height: 150px;"
+                class="img-thumbnail mb-2">
+        </div>
+        <div class="form-check mb-2">
+            <input type="checkbox" id="image-clear-checkbox" name="image-clear" class="form-check-input">
+            <label for="image-clear-checkbox" class="form-check-label">Clear current image</label>
+        </div>
+        <div id="new-image-upload">
+            <label>Upload new image (leave empty to keep current image):</label>
+            {{ form.image }}
+        </div>
+        {% else %}
+        {{ form.image }}
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+        {{ form.category.errors }}
+        {{ form.category }}
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+</form>
+
+<script>
+    // Add Bootstrap classes to form fields
+    document.addEventListener('DOMContentLoaded', function () {
+        const formInputs = document.querySelectorAll('#blogForm input[type="text"], #blogForm input[type="email"], #blogForm input[type="number"], #blogForm select');
+        formInputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+
+        const textareas = document.querySelectorAll('#blogForm textarea');
+        textareas.forEach(textarea => {
+            textarea.classList.add('form-control');
+        });
+
+        // Handle file input styling
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+
+        // Toggle file upload when clear checkbox is clicked
+        const clearCheckbox = document.getElementById('image-clear-checkbox');
+        if (clearCheckbox) {
+            clearCheckbox.addEventListener('change', function () {
+                const newImageUpload = document.getElementById('new-image-upload');
+                if (this.checked) {
+                    newImageUpload.style.display = 'none';
+                } else {
+                    newImageUpload.style.display = 'block';
+                }
+            });
+        }
+    });
+</script>
