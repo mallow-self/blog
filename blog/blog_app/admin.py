@@ -5,4 +5,4 @@ from .models import Blog
 # Register your models here.
 @admin.register(Blog)
 class BlogModel(admin.ModelAdmin):
-    list_display = ["title", "content", "image", "category"]
+    list_display = ["id", "title", "content", "image", "category"]
