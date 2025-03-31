@@ -11,3 +11,6 @@ class Blog(models.Model):
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # def to_dict(self):
+    #     return {"title": self.title, "content": self.content, "category":self.category}

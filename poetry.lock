@@ -37,6 +37,17 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-ajax-datatable"
+version = "4.5.0"
+description = "Helper class to integrate Django with datatables"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "django_ajax_datatable-4.5.0-py2.py3-none-any.whl", hash = "sha256:99233042e6c7d03ed730ea13b4dba1c3e8a66dd1f57022a07b29acb8812ad6f1"},
+]
+
+[[package]]
 name = "django-debug-toolbar"
 version = "5.1.0"
 description = "A configurable set of panels that display various debug information about the current request/response."
@@ -173,4 +184,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "2d839782c77c7c2c12c823ee9cb1b388c7e462483597cf4de4dd2cf9d1b2c4a2"
+content-hash = "97fa07bf71beaff6a29f458a5b09d3a2d6dd26a2d17b75b67754544b32baf024"
