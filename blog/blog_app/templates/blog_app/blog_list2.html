@@ -128,10 +128,15 @@
                 $("#blogForm").on("submit", function (e) {
                     e.preventDefault();
 
+                    // Create FormData object for file uploads
+                    const formData = new FormData(this);
+
                     $.ajax({
                         url: $(this).attr("action"),
                         type: $(this).attr("method"),
-                        data: $(this).serialize(),
+                        data: formData,
+                        processData: false,  // Important for FormData
+                        contentType: false,  // Important for FormData
                         success: function (response) {
                             if (response.success) {
                                 // Close modal and refresh table
