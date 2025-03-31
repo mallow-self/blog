@@ -60,7 +60,14 @@
                 serverSide: true,
                 ajax: "{% url 'blog:blog_ajax' %}",
                 columns: [
-                    { data: "pk" },
+                    { 
+                        data: "pk", 
+                        visible: true,
+                        render: function(data,type,row, meta){
+                            return meta.row +1;
+                        },  
+
+                    },
                     {
                         data: "title",
                         render: function (data, type, row) {

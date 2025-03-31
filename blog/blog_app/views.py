@@ -154,12 +154,12 @@ class BlogUpdateView(UpdateView):
 class BlogDeleteView(DeleteView):
     model = Blog
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.delete()
+    def post(self, request, *args, **kwargs):
+        blog = get_object_or_404(Blog, pk=kwargs['pk'])
+        blog.delete()
         return JsonResponse({
             'success': True,
             'message': 'Blog deleted successfully!'
         })
     
-    success_url = reverse_lazy('blog:blog_list')
+    # success_url = reverse_lazy('blog:blog_list')
