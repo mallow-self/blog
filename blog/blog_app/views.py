@@ -1,7 +1,7 @@
 from django.shortcuts import render,  get_object_or_404
 from django.http import JsonResponse
 from asgiref.sync import sync_to_async
-from django.views.generic import ListView, TemplateView, DetailView, UpdateView, CreateView
+from django.views.generic import ListView, TemplateView, DetailView, UpdateView, CreateView, DeleteView
 from .models import Blog
 from ajax_datatable.views import AjaxDatatableView
 from django.template.response import TemplateResponse
@@ -149,3 +149,17 @@ class BlogUpdateView(UpdateView):
                 'html': render_to_string(self.template_name, context, request=self.request)
             })
         return super().form_invalid(form)
+
+
+class BlogDeleteView(DeleteView):
+    model = Blog
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'Blog deleted successfully!'
+        })
+    
+    success_url = reverse_lazy('blog:blog_list')
