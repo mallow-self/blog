@@ -1,33 +1,16 @@
 from django.shortcuts import render,  get_object_or_404
 from django.http import JsonResponse
 from asgiref.sync import sync_to_async
-from django.views.generic import ListView, TemplateView, DetailView, UpdateView, CreateView, DeleteView
+from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
 from .models import Blog
 from ajax_datatable.views import AjaxDatatableView
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.template.loader import render_to_string
-
-
-# Create your views here.
-# class BlogListView(ListView):
-#     model = Blog
-#     template_name = "blog_app/blog_list.html"
-#     context_object_name = "blog_data"
-#     http_method_names = ["get"]
-#     view_is_async = True
-
-#     async def get(self, request, *args, **kwargs):
-#         """Function to make the view async"""
-        
-#         # blog_queryset = await sync_to_async(list)(Blog.objects.all())
-#         # if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-#         #     return JsonResponse({"blogs": [blog.to_dict() for blog in blog_queryset]})
-#         return super().get(request, *args, **kwargs)  # Default template rendering
     
 
 class BlogTableView(TemplateView):
-    template_name = "blog_app/blog_list2.html"
+    template_name = "blog_app/blog_list.html"
 
 
 class BlogAjaxDatatableView(AjaxDatatableView):
