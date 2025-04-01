@@ -7,7 +7,7 @@ from ajax_datatable.views import AjaxDatatableView
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.template.loader import render_to_string
-    
+
 
 class BlogTableView(TemplateView):
     """
@@ -20,6 +20,7 @@ class BlogTableView(TemplateView):
         template_name: str = "blog_app/blog_list.html"
     except (Exception) as e:
         print(f"Exception occured:{e}")
+
 
 class BlogAjaxDatatableView(AjaxDatatableView):
     """
@@ -77,10 +78,10 @@ class BlogCreateView(CreateView):
     Methods:
         get(request, *args, **kwargs):
             Handles GET requests. If the request is AJAX, returns only the form.
-        
+
         form_valid(form):
             Handles successful form submission. Returns JSON response for AJAX requests.
-        
+
         form_invalid(form):
             Handles form submission with errors. Returns JSON response with form errors for AJAX requests.
     """
@@ -229,26 +230,74 @@ class BlogUpdateView(UpdateView):
 class BlogDeleteView(DeleteView):
     """
     A view for deleting a blog post with AJAX support.
-
+    
     Attributes:
         model (Model): The Django model associated with this view (Blog).
-
+    
     Methods:
+        get(request, *args, **kwargs):
+            Handles the HTTP GET request (usually used for displaying details).
         post(request, *args, **kwargs):
-            Handles AJAX-based deletion of a blog post. Returns a JSON response upon success.
+            Handles the AJAX-based deletion of a blog post. Returns a JSON response upon success.
+        delete(request, *args, **kwargs):
+            Handles the HTTP DELETE request for deleting a blog post.
     """
-    try:
-        model = Blog
-    except (Exception) as e:
-        print(f"Exception occured:{e}")
+    model = Blog
+    # Ensure all methods are asynchronous
 
-    def post(self, request, *args, **kwargs):
+    async def get(self, request, *args, **kwargs):
+        """
+        Optionally, you can fetch and return details of the blog post before deletion.
+        You may want to return a confirmation page or a JSON response.
+        """
         try:
-            blog = get_object_or_404(Blog, pk=kwargs['pk'])
-            blog.delete()
+            return JsonResponse({
+                'success': False,
+                'message': 'Get operation not allowed',
+            },status=405)
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            return JsonResponse({
+                'success': False,
+                'message': 'An error occurred while retrieving the blog.'
+            })
+
+    async def post(self, request, *args, **kwargs):
+        """
+        Handles the AJAX-based deletion of a blog post.
+        Returns a JSON response upon success.
+        """
+        try:
+            blog = await sync_to_async(Blog.objects.get)(pk=kwargs['pk'])
+            await sync_to_async(blog.delete)()  # Delete asynchronously
             return JsonResponse({
                 'success': True,
                 'message': 'Blog deleted successfully!'
             })
-        except (Exception) as e:
-            print(f"Exception occured:{e}")
+        except Blog.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Blog not found.'
+            })
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            return JsonResponse({
+                'success': False,
+                'message': 'An error occurred while deleting the blog.'
+            })
+
+    async def delete(self, request, *args, **kwargs):
+        """
+        You can optionally implement the `delete` method for handling HTTP DELETE requests.
+        """
+        try:
+            return JsonResponse({
+                'success': False,
+                'message': 'DELETE operation not allowed, use POST instead',
+            }, status=405)
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            return JsonResponse({
+                'success': False,
+                'message': 'An error occurred while retrieving the blog.'
+            },status=500)
