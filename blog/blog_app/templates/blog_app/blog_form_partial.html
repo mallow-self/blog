@@ -53,24 +53,3 @@
         <button type="submit" class="btn btn-primary">Save</button>
     </div>
 </form>
-
-<script>
-    // Add Bootstrap classes to form fields
-    document.addEventListener('DOMContentLoaded', function () {
-        const formInputs = document.querySelectorAll('#blogForm input[type="text"], #blogForm input[type="email"], #blogForm input[type="number"], #blogForm select');
-        formInputs.forEach(input => {
-            input.classList.add('form-control');
-        });
-
-        const textareas = document.querySelectorAll('#blogForm textarea');
-        textareas.forEach(textarea => {
-            textarea.classList.add('form-control');
-        });
-
-        // Handle file input styling
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        fileInputs.forEach(input => {
-            input.classList.add('form-control');
-        });
-    });
-</script>

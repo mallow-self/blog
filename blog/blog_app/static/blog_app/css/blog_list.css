@@ -1,0 +1,55 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background: linear-gradient(135deg, #0c7ca4, #002c3e);
+    background-repeat: no-repeat;
+    font-family: 'Arial', sans-serif;
+    background-attachment: fixed;
+}
+
+/* Center and beautify the form container */
+.container {
+    border: none;
+    width: 100%;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Style the submit button */
+button {
+    width: auto;
+    padding: 10px;
+    background-color: #0c7ca4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Add hover effect for button */
+button:hover {
+    background-color: #095a75;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+a{
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+    color: rgb(0, 162, 255);
+}
