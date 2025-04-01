@@ -7,7 +7,7 @@ from ajax_datatable.views import AjaxDatatableView
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.template.loader import render_to_string
-
+from .form import BlogForm
 
 class BlogTableView(TemplateView):
     """
@@ -87,7 +87,7 @@ class BlogCreateView(CreateView):
     """
     try:
         model = Blog
-        fields: list[str] = ['title', 'content', 'image', 'category']
+        form_class = BlogForm
         template_name: str = 'blog_app/blog_form_partial.html'
         success_url = reverse_lazy('blog:blog_list')
     except (Exception) as e:
@@ -153,7 +153,8 @@ class BlogUpdateView(UpdateView):
     """
     try:
         model = Blog
-        fields: list[str] = ['title', 'content', 'image', 'category']
+        form_class = BlogForm
+        # fields: list[str] = ['title', 'content', 'image', 'category']
         template_name: str = 'blog_app/blog_form_partial.html'
         success_url = reverse_lazy('blog:blog_list')
     except (Exception) as e:
