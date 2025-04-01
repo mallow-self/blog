@@ -12,5 +12,3 @@ urlpatterns: list = [
     path('edit/<int:pk>/', BlogUpdateView.as_view(), name='blog_update'),
     path('delete/<int:pk>/', BlogDeleteView.as_view(), name='blog_delete' ),
 ]
-
-# 

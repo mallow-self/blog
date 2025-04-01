@@ -4,13 +4,21 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
     <title>Blog List</title>
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'blog_app/assets/favicon.ico'%}" />
+    <!-- datatables css -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+    <!-- bootstrap css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <!-- jquery js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- datatables js -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- bootstrap js  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
 
@@ -32,12 +40,12 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- DataTables will fill this -->
+                <!-- Dynamic data populate by datatables from serverside -->
             </tbody>
         </table>
     </div>
 
-    <!-- Modal for Create/Edit -->
+    <!-- Modal for Create/Edit functionality -->
     <div class="modal fade" id="blogModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -46,7 +54,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Form will be loaded here via AJAX -->
+                    <!-- Ajax will populate the form either by update or create -->
                 </div>
             </div>
         </div>
@@ -64,21 +72,21 @@
                         data: "pk", 
                         visible: true,
                         render: function(data,type,row, meta){
-                            return meta.row +1;
+                            return meta.row +1; // since id is not continuous(due to delete operation), calculated continuous number for each row.
                         },  
 
                     },
                     {
                         data: "title",
                         render: function (data, type, row) {
-                            return '<a href="/blog/' + row.pk + '">' + data + "</a>";
+                            return '<a href="/blog/' + row.pk + '">' + data + "</a>"; // will redirect to detail page
                         },
                     },
                     {
                         data: "content",
                         render: function (data, type, row) {
                             return type === "display" && data.length > 100
-                                ? data.substr(0, 100) + "..."
+                                ? data.substr(0, 100) + "..." // display only 100 characters
                                 : data;
                         },
                     },
