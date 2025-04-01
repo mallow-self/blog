@@ -25,10 +25,6 @@
             <img src="{{ image_url }}" alt="Blog image" style="max-width: 200px; max-height: 150px;"
                 class="img-thumbnail mb-2">
         </div>
-        <div class="form-check mb-2">
-            <input type="checkbox" id="image-clear-checkbox" name="image-clear" class="form-check-input">
-            <label for="image-clear-checkbox" class="form-check-label">Clear current image</label>
-        </div>
         <div id="new-image-upload">
             <label>Upload new image (leave empty to keep current image):</label>
             {{ form.image }}
@@ -76,18 +72,5 @@
         fileInputs.forEach(input => {
             input.classList.add('form-control');
         });
-
-        // Toggle file upload when clear checkbox is clicked
-        const clearCheckbox = document.getElementById('image-clear-checkbox');
-        if (clearCheckbox) {
-            clearCheckbox.addEventListener('change', function () {
-                const newImageUpload = document.getElementById('new-image-upload');
-                if (this.checked) {
-                    newImageUpload.style.display = 'none';
-                } else {
-                    newImageUpload.style.display = 'block';
-                }
-            });
-        }
     });
 </script>
