@@ -13,7 +13,6 @@ from django.views.generic import (
 )
 from .models import Blog
 from ajax_datatable.views import AjaxDatatableView
-from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.template.loader import render_to_string
 from .form import BlogForm, RegistrationForm, LoginForm
