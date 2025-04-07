@@ -27,10 +27,12 @@
 <body>
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Blog List</h2>
-            <button id="createBtn" class="btn btn-success">Create New Blog</button>
+            <h2 class="mb-0">Blog List</h2>
+            <div>
+                <button id="logoutBtn" class="btn btn-danger me-2">Logout</button>
+                <button id="createBtn" class="btn btn-success">Create New Blog</button>
+            </div>
         </div>
-
         <table id="blog-table" class="display" style="width: 100%">
             <thead>
                 <tr>
@@ -38,6 +40,7 @@
                     <th>Title</th>
                     <th>Content</th>
                     <th>Category</th>
+                    <th>Author</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -93,6 +96,7 @@
                         },
                     },
                     { data: "category" },
+                    { data: "author" },
                     {
                         data: null,
                         orderable: false,
@@ -137,7 +141,11 @@
                         setupFormSubmission();
                     },
                     error: function (xhr, status, error) {
-                        $(".modal-body").html('<div class="alert alert-danger">Error loading form: ' + error + '</div>');
+                        if(error="Forbidden"){
+                            $(".modal-body").html('<div class="alert alert-danger">Edit Operation: ' + error + '</div>');
+                        }else{
+                            $(".modal-body").html('<div class="alert alert-danger">Error loading form: ' + error + '</div>');
+                        }
                     }
                 });
             }
@@ -212,10 +220,22 @@
                                         timer: 1500
                                     });
                                 }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown){
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Deletion Failed!',
+                                    text: `Delete Operation: ${errorThrown}`,
+                                    timer: 1500
+                                });
                             }
                         });
                     }
                 });
+            });
+
+            $('#logoutBtn').click(function(){
+                window.location.href = "{% url 'blog:logout' %}";
             });
         });
     </script>

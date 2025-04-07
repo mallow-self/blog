@@ -1,6 +1,5 @@
 from django.shortcuts import render,  get_object_or_404, redirect
 from django.http import JsonResponse
-from asgiref.sync import sync_to_async
 from django.views.generic import (
     TemplateView,
     DetailView,
@@ -106,7 +105,7 @@ class BlogAjaxDatatableView(LoginRequiredMixin, AjaxDatatableView):
                 "name": "author",
                 "title": "Author",
                 "orderable": True,
-                "foreign_field": "author__first_name,author__last_name",
+                "foreign_field": "author__first_name",
                 "placeholder": True,
                 "choices": True,
                 "autofilter": True,
@@ -185,8 +184,8 @@ class BlogCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                 
                 Title: {self.object.title}
                 Category: {self.object.category}
-                Author: {self.object.author.get_full_name()}
-                Editor: {self.object.editor.get_full_name()}
+                Author: {self.object.author.get_full_name() or self.object.author.username}
+                Editor: {self.object.editor.get_full_name() or self.object.editor.username}
                 
                 Please review the content at your earliest convenience.
                 """
@@ -327,48 +326,16 @@ class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """
-    A view for deleting a blog post with AJAX support.
-    Requires user to be logged in and be in Publisher group.
-    """
-
     model = Blog
     login_url = reverse_lazy("blog:login")
 
     def test_func(self):
-        """Check if user belongs to Publisher group"""
         return self.request.user.groups.filter(name="Publisher").exists()
 
-    async def get(self, request, *args, **kwargs):
-        """
-        Optionally, you can fetch and return details of the blog post before deletion.
-        You may want to return a confirmation page or a JSON response.
-        """
+    def post(self, request, *args, **kwargs):
         try:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "message": "Get operation not allowed",
-                },
-                status=405,
-            )
-        except Exception as e:
-            print(f"Exception occurred: {e}")
-            return JsonResponse(
-                {
-                    "success": False,
-                    "message": "An error occurred while retrieving the blog.",
-                }
-            )
-
-    async def post(self, request, *args, **kwargs):
-        """
-        Handles the AJAX-based deletion of a blog post.
-        Returns a JSON response upon success.
-        """
-        try:
-            blog = await sync_to_async(Blog.objects.get)(pk=kwargs["pk"])
-            await sync_to_async(blog.delete)()  # Delete asynchronously
+            blog = Blog.objects.get(pk=kwargs["pk"])
+            blog.delete()
             return JsonResponse(
                 {"success": True, "message": "Blog deleted successfully!"}
             )
@@ -381,26 +348,4 @@ class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                     "success": False,
                     "message": "An error occurred while deleting the blog.",
                 }
-            )
-
-    async def delete(self, request, *args, **kwargs):
-        """
-        You can optionally implement the `delete` method for handling HTTP DELETE requests.
-        """
-        try:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "message": "DELETE operation not allowed, use POST instead",
-                },
-                status=405,
-            )
-        except Exception as e:
-            print(f"Exception occurred: {e}")
-            return JsonResponse(
-                {
-                    "success": False,
-                    "message": "An error occurred while retrieving the blog.",
-                },
-                status=500,
             )

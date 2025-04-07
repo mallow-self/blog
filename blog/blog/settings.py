@@ -123,7 +123,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-#Added static files to the main app
+# Added static files to the main app
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "blog_app", "static")]
 
 # Added internal ip for django toolbar
@@ -142,3 +142,7 @@ AJAX_DATATABLE_MAX_DISPLAY_LENGTH = 500
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+# For dev use only
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Email sender
+DEFAULT_FROM_EMAIL = "noreply@blogapp.com"
