@@ -40,7 +40,6 @@ def delete_mail(object):
         publisher_email=[editor.email, author.email],
     )
 
-
 def update_mail(object):
     publisher = object.publisher
     author = object.author

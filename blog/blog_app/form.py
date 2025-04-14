@@ -53,6 +53,14 @@ class BlogForm(forms.ModelForm):
         required=True,
     )
 
+    publish_at = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            attrs={"class": "form-control", "type": "datetime-local"}
+        ),
+        label="Publish At",
+        required=True,
+    )
+
     class Meta:
         model = Blog
         fields = (
@@ -63,6 +71,7 @@ class BlogForm(forms.ModelForm):
             "author",
             "editor",
             "publisher",
+            "publish_at",
         )
 
 

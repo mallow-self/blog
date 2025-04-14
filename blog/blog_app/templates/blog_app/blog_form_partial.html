@@ -56,6 +56,15 @@
         {{ form.publisher }}
     </div>
 
+    {% if form.publish_at %}
+        <div class="mb-3">
+            <label for="{{ form.publish_at.id_for_label }}" class="form-label">Publish At</label>
+            {{ form.publish_at.errors }}
+            {{ form.publish_at }}
+        </div>
+    {% endif %}
+    
+
     {% if form.non_field_errors %}
     <div class="alert alert-danger">
         {% for error in form.non_field_errors %}

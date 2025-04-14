@@ -113,6 +113,9 @@ class BlogAjaxDatatableView(LoginRequiredMixin, AjaxDatatableView):
     except Exception as e:
         print(f"Exception occured:{e}")
 
+    def get_initial_queryset(self, request=None):
+        return Blog.objects.filter(is_published=True)
+
 
 class BlogDetailView(LoginRequiredMixin, DetailView):
     """
@@ -226,6 +229,12 @@ class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             name__in=["Editor", "Publisher"]
         ).exists()
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        # Remove the 'publish_at' field in the update form
+        form.fields.pop("publish_at", None)
+        return form
+
     def get(self, request, *args, **kwargs):
         # If AJAX request, return only the form
         try:
@@ -320,7 +329,7 @@ class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             # send mail to author and editor
             delete_mail(blog)
             blog.delete()
-            
+
             return JsonResponse(
                 {"success": True, "message": "Blog deleted successfully!"}
             )

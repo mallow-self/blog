@@ -3,6 +3,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import User
 from .models import Blog
+from django.utils import timezone
+
 
 @shared_task
 def send_email(subject,message,from_email,publisher_email):
@@ -49,3 +51,33 @@ def daily_mail_users():
     )
 
 
+@shared_task
+def publish_scheduled_blogs():
+    now = timezone.now()
+    blogs = Blog.objects.filter(is_published=False, publish_at__lte=now)
+    for blog in blogs:
+        blog.is_published = True
+        blog.save()
+        publish_mail(blog)
+
+
+def publish_mail(object):
+    author = object.author
+    editor = object.editor
+    subject = f"Blog Post Published: {object.title}"
+    message = f"""
+                Your Blog post has been published!
+                
+                Title: {object.title}
+                Category: {object.category}
+                Author: {object.author.get_full_name() or object.author.username}
+                Editor: {object.editor.get_full_name() or object.editor.username}
+                
+                """
+    # sending email from celery to editor and author
+    send_email.delay(
+        subject=subject,
+        message=message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        publisher_email=[author.email, editor.email],
+    )
