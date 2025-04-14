@@ -29,7 +29,6 @@ urlpatterns: list = [
     path("logout/", LogoutView.as_view(), name="logout"),
 ]
 
-# Initialize groups when the app is loaded
-# This will ensure that the required groups exist
+# initialize groups when the app is loaded this will ensure that the required groups exist
 if not apps.is_installed("blog_app.apps.BlogAppConfig"):
     initialize_groups()

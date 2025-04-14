@@ -18,6 +18,8 @@ class Blog(models.Model):
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    publish_at = models.DateTimeField(null=True, blank=True)
+    is_published = models.BooleanField(default=False)
 
     # New fields for user roles
     author = models.ForeignKey(
