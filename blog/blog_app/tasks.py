@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from .models import Blog
 from django.utils import timezone
+from .custom_exceptions import EmailSendingError
 
 
 @shared_task
@@ -21,13 +22,17 @@ def send_email(subject,message,from_email,publisher_email):
         int: The number of successfully delivered messages (1 if successful, 0 otherwise).
     """
     print(f"Sending notification to {publisher_email}")
-    return send_mail(
-        subject,
-        message,
-        from_email,
-        publisher_email,
-        fail_silently=False,
-    )
+    try:
+        return send_mail(
+            subject,
+            message,
+            from_email,
+            publisher_email,  # should be a list
+            fail_silently=False,
+        )
+    except Exception as e:
+        print(f"Error sending email to {publisher_email}: {e}")
+        raise EmailSendingError(str(e), publisher_email)
 
 
 @shared_task 
