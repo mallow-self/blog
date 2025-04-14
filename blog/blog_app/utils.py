@@ -3,6 +3,18 @@ from blog_app.tasks import send_email
 
 
 def review_mail(object):
+    """
+    Sends a review notification email to the blog's publisher and editor.
+
+    Notifies the responsible parties that a new blog post has been created
+    and is pending review, including key blog details in the message.
+
+    Args:
+        object (Blog): The blog instance that has been created.
+
+    Returns:
+        None
+    """
     publisher = object.publisher
     editor = object.editor
     subject = f"New Blog Post Created: {object.title}"
@@ -20,6 +32,18 @@ def review_mail(object):
     send_email.delay(subject=subject, message=message, from_email=settings.DEFAULT_FROM_EMAIL,publisher_email=[publisher.email,editor.email])
 
 def delete_mail(object):
+    """
+    Sends a deletion notification email to the blog's editor and author.
+
+    Notifies the relevant parties that a blog post has been deleted,
+    including details about the blog and the user who performed the deletion.
+
+    Args:
+        object (Blog): The blog instance that was deleted.
+
+    Returns:
+        None
+    """
     editor = object.editor
     author = object.author
     subject = f"Blog Post Deleted: {object.title}"
@@ -41,6 +65,18 @@ def delete_mail(object):
     )
 
 def update_mail(object):
+    """
+    Sends an update notification email to the blog's publisher and author.
+
+    Alerts relevant users that a blog post has been updated, including blog details
+    and a prompt to review the changes.
+
+    Args:
+        object (Blog): The blog instance that has been updated.
+
+    Returns:
+        None
+    """
     publisher = object.publisher
     author = object.author
     subject = f"Blog Post Updated: {object.title}"

@@ -8,6 +8,18 @@ from django.utils import timezone
 
 @shared_task
 def send_email(subject,message,from_email,publisher_email):
+    """
+    Sends an email notification to the specified publisher using Django's send_mail function.
+
+    Args:
+        subject (str): Subject line of the email.
+        message (str): Body content of the email.
+        from_email (str): Sender's email address.
+        publisher_email (str): Recipient publisher's email address.
+
+    Returns:
+        int: The number of successfully delivered messages (1 if successful, 0 otherwise).
+    """
     print(f"Sending notification to {publisher_email}")
     return send_mail(
         subject,
@@ -20,6 +32,16 @@ def send_email(subject,message,from_email,publisher_email):
 
 @shared_task 
 def daily_mail_users():
+    """
+    Sends a daily email to all registered users containing the three most recent blog titles.
+
+    This task retrieves all user email addresses and the latest three blog posts,
+    formats them into an email message, and sends it using Django's send_mail function.
+    Intended to be triggered by a daily cron job.
+
+    Returns:
+        int: The number of successfully delivered messages.
+    """
     print("email starting...")
     users = User.objects.all().values_list('email',flat=True)
     recent_blogs = Blog.objects.order_by("-created_at")[:3]
@@ -53,6 +75,16 @@ def daily_mail_users():
 
 @shared_task
 def publish_scheduled_blogs():
+    """
+    Publishes blogs that are scheduled to go live.
+
+    This task checks for blogs that are not yet published but have a `publish_at` timestamp
+    less than or equal to the current time. It marks them as published and sends a
+    notification email for each published blog.
+
+    Returns:
+        None
+    """
     now = timezone.now()
     blogs = Blog.objects.filter(is_published=False, publish_at__lte=now)
     for blog in blogs:
@@ -62,6 +94,18 @@ def publish_scheduled_blogs():
 
 
 def publish_mail(object):
+    """
+    Sends a publication notification email to the blog's author and editor.
+
+    Constructs an email message with blog details such as title, category, author, and editor,
+    and sends it asynchronously using the `send_email` task.
+
+    Args:
+        object (Blog): The blog instance that has been published.
+
+    Returns:
+        None
+    """
     author = object.author
     editor = object.editor
     subject = f"Blog Post Published: {object.title}"
