@@ -19,9 +19,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.mail import send_mail
-from django.conf import settings
-
+from .utils import review_mail, update_mail, delete_mail
 
 class RegisterView(CreateView):
     template_name = "blog_app/register.html"
@@ -176,26 +174,8 @@ class BlogCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 self.object = form.save()
 
-                # Send email to publisher
-                publisher = self.object.publisher
-                subject = f"New Blog Post Created: {self.object.title}"
-                message = f"""
-                A new blog post has been created and requires your attention:
-                
-                Title: {self.object.title}
-                Category: {self.object.category}
-                Author: {self.object.author.get_full_name() or self.object.author.username}
-                Editor: {self.object.editor.get_full_name() or self.object.editor.username}
-                
-                Please review the content at your earliest convenience.
-                """
-                send_mail(
-                    subject,
-                    message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [publisher.email],
-                    fail_silently=False,
-                )
+                # Send email to publisher and editor
+                review_mail(self.object)
 
                 return JsonResponse(
                     {
@@ -283,6 +263,8 @@ class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
                     self.object.save()
                     form.save_m2m()  # Save many-to-many relationships if any
+                    # Send mail to author,publisher
+                    update_mail(self.object)
                 else:
                     self.object = form.save()
 
@@ -335,7 +317,10 @@ class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         try:
             blog = Blog.objects.get(pk=kwargs["pk"])
+            # send mail to author and editor
+            delete_mail(blog)
             blog.delete()
+            
             return JsonResponse(
                 {"success": True, "message": "Blog deleted successfully!"}
             )

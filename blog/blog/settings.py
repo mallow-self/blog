@@ -146,3 +146,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # Email sender
 DEFAULT_FROM_EMAIL = "noreply@blogapp.com"
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
